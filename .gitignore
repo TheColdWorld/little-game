@@ -7,3 +7,6 @@
 /little-game.server.class/x64
 /little-game.server.launcher/.vs
 /little-game.server.launcher/x64
+/little-game.client.wpf/.vs
+/little-game.client.wpf/bin
+/little-game.client.wpf/obj
