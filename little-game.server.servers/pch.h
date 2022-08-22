@@ -9,5 +9,17 @@
 
 // 添加要在此处预编译的标头
 #include "framework.h"
-
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define WIN32_LEAN_AND_MEAN
+#define  _CRT_SECURE_NO_WARNINGS
+#define cls std::system("cls")
+#define pause std::system("pause")
+#define endl printf("\n")
+#include <stdio.h>
+#include <string>
+#include <WS2tcpip.h>
+#pragma comment(lib,"ws2_32.lib")
+#pragma comment(lib,"psapi.lib")
+#include<time.h>
+#include <psapi.h>
 #endif //PCH_H
