@@ -15,9 +15,35 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     }
     return TRUE;
 }
-
-extern"C" __declspec(dllexport) void server_0(int port0,int port1,int port2,int portplayer1,int portplayer2 ,std::string IPplayer1,std::string IPplayer2,bool debug)
+extern"C" __declspec(dllexport) typedef struct server0
 {
+    int port0;
+    int port1;
+    int port2;
+    bool debug;
+}server00;
+extern"C" __declspec(dllexport) typedef struct server1
+{
+    int port1;
+    std::string IPplayer1;
+    int portplayer1;
+}server01;
+extern"C" __declspec(dllexport) typedef struct server2
+{
+    int port2;
+    int portplayer2;
+    std::string IPplayer2;
+}server02;
+extern"C" __declspec(dllexport) typedef struct ip
+{
+    int portplayer1;
+    int portplayer2;
+    std::string IPplayer1;
+    std::string IPplayer2;
+}pi;
+extern"C" __declspec(dllexport) void server_0(void* arg,pi* out)
+{
+    server00* ptr = (server00*)arg;
     double time1 = clock();
     int playercount =0;
     SOCKET server_0;
@@ -28,7 +54,7 @@ extern"C" __declspec(dllexport) void server_0(int port0,int port1,int port2,int 
     memset(&server_0_addr, 0, sizeof(server_0_addr));
     server_0_addr.sin_family = AF_INET;
     server_0_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_0_addr.sin_port = htons(port0);
+    server_0_addr.sin_port = htons(ptr->port0);
     bind(server_0, (SOCKADDR*)&server_0_addr, sizeof(SOCKADDR));
     listen(server_0, 5);
     printf("分配服务端：启动成功，等待链接");
@@ -60,11 +86,11 @@ extern"C" __declspec(dllexport) void server_0(int port0,int port1,int port2,int 
                 printf("分配服务端：玩家1成功进入游戏");
                 endl;
                 playercount++;
-                send(client_0, std::to_string(port1).c_str(), sizeof(std::to_string(port1).c_str()), 0);
+                send(client_0, std::to_string(ptr->port1).c_str(), sizeof(std::to_string(ptr->port1).c_str()), 0);
                 memset(recv_buf, 0, CHAR_MAX);
-                portplayer1 = ntohs(client_0_addr.sin_port);
+                out->portplayer1 = ntohs(client_0_addr.sin_port);
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
-                IPplayer1 = IP;
+                out->IPplayer1 = IP;
                 send(client_0, "0", sizeof("0"), 0);
                 break;
             }
@@ -75,12 +101,12 @@ extern"C" __declspec(dllexport) void server_0(int port0,int port1,int port2,int 
                 printf("分配服务端：玩家2成功进入游戏");
                 endl;
                 playercount++;
-                send(client_0, std::to_string(port2).c_str(), sizeof(std::to_string(port2).c_str()), 0);
+                send(client_0, std::to_string(ptr->port2).c_str(), sizeof(std::to_string(ptr->port2).c_str()), 0);
                 memset(recv_buf, 0, CHAR_MAX);
                 memset(&IP, 0, sizeof(IP));
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
-                IPplayer2 = IP;
-                portplayer2 = ntohs(client_0_addr.sin_port);
+                out->IPplayer2 = IP;
+                out->portplayer2 = ntohs(client_0_addr.sin_port);
                 send(client_0, "0", sizeof("0"), 0);
                 break;
             }
@@ -95,7 +121,7 @@ extern"C" __declspec(dllexport) void server_0(int port0,int port1,int port2,int 
             }
             break;
         case 2:
-            if (debug)
+            if (ptr->debug)
             {
                 send(client_0, "0", sizeof("0"), 0);
                 int costs = int(clock() - time1) / CLOCKS_PER_SEC;
@@ -120,8 +146,9 @@ extern"C" __declspec(dllexport) void server_0(int port0,int port1,int port2,int 
         closesocket(client_0);
     }
 }
-extern"C" __declspec(dllexport) void server_1(int port1,std::string IPplayer1,int portplayer1)
+extern"C" __declspec(dllexport) void server_1(void* arg)
 {
+    server01* ptr = (server01*)arg;
     SOCKET server_1;
     server_1 = socket(AF_INET, SOCK_STREAM, 0);
     int len_1;
@@ -130,7 +157,7 @@ extern"C" __declspec(dllexport) void server_1(int port1,std::string IPplayer1,in
     memset(&server_1_addr, 0, sizeof(server_1_addr));
     server_1_addr.sin_family = AF_INET;
     server_1_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_1_addr.sin_port = htons(port1);
+    server_1_addr.sin_port = htons(ptr->port1);
     bind(server_1, (SOCKADDR*)&server_1_addr, sizeof(SOCKADDR));
     listen(server_1, 5);
     printf("游戏服务端：玩家1加载完毕");
@@ -147,13 +174,13 @@ extern"C" __declspec(dllexport) void server_1(int port1,std::string IPplayer1,in
         }
         char recv_buf[CHAR_MAX];
         recvfrom(client_1, recv_buf, sizeof(recv_buf), 0, (SOCKADDR*)&client_1_addr, &len_1);
-        if (inet_ntop(client_1_addr.sin_family, &client_1_addr.sin_addr, new char[327], 327) != IPplayer1)
+        if (inet_ntop(client_1_addr.sin_family, &client_1_addr.sin_addr, new char[327], 327) != ptr->IPplayer1)
         {
             printf("游戏服务端：发现陌生链接，已自动断开");
             endl; closesocket(client_1);
             continue;
         }
-        if (ntohs(client_1_addr.sin_port) != portplayer1)
+        if (ntohs(client_1_addr.sin_port) != ptr->portplayer1)
         {
             printf("游戏服务端：发现陌生链接，已自动断开");
             endl;
@@ -167,9 +194,9 @@ extern"C" __declspec(dllexport) void server_1(int port1,std::string IPplayer1,in
         }
     }
 }
-extern"C" __declspec(dllexport) void server_2(int port2,int portplayer2,std::string IPplayer2)
+extern"C" __declspec(dllexport) void server_2(void* arg)
 {
-
+    server02* ptr = (server02*)arg;
     SOCKET server_2;
     server_2 = socket(AF_INET, SOCK_STREAM, 0);
     int len_2;
@@ -178,7 +205,7 @@ extern"C" __declspec(dllexport) void server_2(int port2,int portplayer2,std::str
     memset(&server_2_addr, 0, sizeof(server_2_addr));
     server_2_addr.sin_family = AF_INET;
     server_2_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_2_addr.sin_port = htons(port2);
+    server_2_addr.sin_port = htons(ptr->port2);
     bind(server_2, (SOCKADDR*)&server_2_addr, sizeof(SOCKADDR));
     listen(server_2, 5);
     printf("游戏服务端：玩家2加载完毕");
@@ -195,14 +222,14 @@ extern"C" __declspec(dllexport) void server_2(int port2,int portplayer2,std::str
         }
         char recv_buf[CHAR_MAX];
         recvfrom(client_2, recv_buf, sizeof(recv_buf), 0, (SOCKADDR*)&client_2_addr, &len_2);
-        if (inet_ntop(client_2_addr.sin_family, &client_2_addr.sin_addr, new char[327], 327) != IPplayer2)
+        if (inet_ntop(client_2_addr.sin_family, &client_2_addr.sin_addr, new char[327], 327) != ptr->IPplayer2)
         {
             printf("游戏服务端：发现陌生链接，已自动断开");
             endl;
             closesocket(client_2);
             continue;
         }
-        if (ntohs(client_2_addr.sin_port) != portplayer2)
+        if (ntohs(client_2_addr.sin_port) != ptr->portplayer2)
         {
             printf("游戏服务端：发现陌生链接，已自动断开");
             endl;
@@ -215,7 +242,4 @@ extern"C" __declspec(dllexport) void server_2(int port2,int portplayer2,std::str
             break;
         }
     }
-
-
-
 }

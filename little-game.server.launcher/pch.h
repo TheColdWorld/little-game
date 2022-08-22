@@ -1,0 +1,16 @@
+#pragma once
+#include <windows.h>
+#include <io.h>
+#include <fstream>
+#include <stdio.h>
+#include <atlstr.h>
+#include <Thread>
+#include <string>
+bool debug;
+int port0;
+int port1;
+int port2;
+int portplayer1;
+int portplayer2;
+std::string IPplayer1;
+std::string IPplayer2;
