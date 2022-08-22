@@ -11,3 +11,5 @@
 /little-game.client.wpf/bin
 /little-game.client.wpf/obj
 /little-game.client.win32/.vs
+/little-game.server.launcher/little-game.server.servers.dll
+/little-game.server.launcher/little-game.server.servers.lib
