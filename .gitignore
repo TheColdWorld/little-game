@@ -1,6 +1,7 @@
 ﻿################################################################################
-# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。                 #
 ################################################################################
-
-/little-game.server.servers/x64/Debug
-/little-game.server.servers/.vs/little-game.server.servers
+/little-game.server.servers/.vs
+/little-game.server.class/.vs
+/little-game.server.servers/x64
+/little-game.server.class/x64
