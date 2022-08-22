@@ -1,4 +1,6 @@
 #include "pch.h"
+#pragma comment(lib,"little-game.server.servers.lib")
+#include "little-game.server.servers.h"
 
 LPCWSTR to_LPCWSTR(const char* in)
 {
@@ -12,9 +14,9 @@ std::string LPWSTR_to_string(LPWSTR in)
     std::string b(CW2A(a.GetString()));
     return b;
 }
-
 int main()
 {
+    
     if (_access("./config.ini", 00) == -1)
     {
         FILE* f;
@@ -30,7 +32,7 @@ int main()
         fprintf(f, "\n;是否开启调试模式(默认为true)\n");
         fclose(f);
     }
-    LPWSTR a;
+    LPWSTR a= new TCHAR[255];
     GetPrivateProfileString(to_LPCWSTR("Global settings"), to_LPCWSTR("debug"), NULL, a, 255, to_LPCWSTR("./config.ini"));
     if(a ==NULL) { printf("[config.ini]中[Global settings]中[debug]值未找到，请检查[config.ini],解决后重新启动程序");}
     if (LPWSTR_to_string(a) == "true" || LPWSTR_to_string(a) == "TRUE") { debug = true; }
@@ -40,4 +42,9 @@ int main()
     port1 = GetPrivateProfileInt(to_LPCWSTR("port settings"), to_LPCWSTR("port1"), 32766, to_LPCWSTR("./config.ini"));
     port2 = GetPrivateProfileInt(to_LPCWSTR("port settings"), to_LPCWSTR("port2"), 32767, to_LPCWSTR("./config.ini"));
     printf("主线程:设置加载完毕！");
+    datas.editport0(port0);
+    datas.editdebug(debug);
+    datas.editport1(port1);
+    datas.editport2(port2);
+    std::future<void> val = std::async(std::launch::async, server_0, &datas);
 }

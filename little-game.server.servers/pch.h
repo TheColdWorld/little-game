@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string>
 #include <WS2tcpip.h>
+#include <winsock2.h>
 #pragma comment(lib,"ws2_32.lib")
 #pragma comment(lib,"psapi.lib")
 #include<time.h>
