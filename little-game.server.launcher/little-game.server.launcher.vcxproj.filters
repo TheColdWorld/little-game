@@ -27,4 +27,14 @@
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\little-game.server.servers\x64\Debug\little-game.server.servers.lib">
+      <Filter>头文件</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\little-game.server.servers\x64\Debug\little-game.server.servers.dll">
+      <Filter>头文件</Filter>
+    </None>
+  </ItemGroup>
 </Project>

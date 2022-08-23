@@ -16,6 +16,7 @@
 #define pause std::system("pause")
 #define endl printf("\n")
 #include <stdio.h>
+#include <future>
 #include <string>
 #include <WS2tcpip.h>
 #include <winsock2.h>
