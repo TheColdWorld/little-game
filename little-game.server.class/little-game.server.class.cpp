@@ -66,7 +66,21 @@ public:
     {
         return A41 + A42 * 10 + A43 * 100 + A441 * 1000 + A442 * 10000 + A45 * 100000 + A46 * 1000000 + A47 * 10000000;
     }
-    
+    void Takedamege(double demage) { HP -= demage; }
+    double Getdemage1() { return DMG1 + DMGE; }
+    double Getdemage3() { return DMG2 + DMGE; }
+    int DOit(int cho, double takedmg, double ipp, int prop)
+    {
+        ReloadEDMG();
+        ReloadProt();
+        prop = PROT;
+        switch (cho)
+        {
+
+        default:
+            break;
+        }
+    }
 private:
     //º¯Êý²¿·Ö
     int Getwear()
