@@ -64,10 +64,10 @@ void server_0(data* arg)
         }
         else printf("分配服务端：有新的链接创建成功\n");
         endl;
-        char recv_buf[5];
+        CHAR recv_buf[CHAR_MAX];
         recvfrom(client_0, recv_buf, 5, 0, (SOCKADDR*)&client_0_addr, &len_0);
         PCSTR  IP;
-        if (recv_buf == "GAME")
+        if (atoi(recv_buf)==1)
         {
             switch (arg->getpys())
             {
@@ -79,7 +79,7 @@ void server_0(data* arg)
                 endl;
                 arg->pyspp();
                 send(client_0, std::to_string(arg->getport1()).c_str(), sizeof(std::to_string(arg->getport1()).c_str()), 0);
-                memset(recv_buf, 0, CHAR_MAX);
+                memset(&recv_buf, 0, CHAR_MAX);
                 arg->editpop1(ntohs(client_0_addr.sin_port));
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
                 arg->editipp1(IP);
@@ -94,7 +94,7 @@ void server_0(data* arg)
                 endl;
                 arg->pyspp();
                 send(client_0, std::to_string(arg->getport2()).c_str(), sizeof(std::to_string(arg->getport2()).c_str()), 0);
-                memset(recv_buf, 0, CHAR_MAX);
+                memset(&recv_buf, 0, CHAR_MAX);
                 memset(&IP, 0, sizeof(IP));
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
                 arg->editipp2(IP);
