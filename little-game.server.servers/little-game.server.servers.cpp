@@ -20,6 +20,7 @@ public:
     void editpop1(int port) { portplayer1 = port; }
     void editpop2(int port) { portplayer2 = port; }
     bool gerstart() { return start; }
+    void editstart(bool arg) { start = arg; }
 private:
     int port0;
     int port1;
@@ -29,7 +30,7 @@ private:
     std::string IPplayer1;
     std::string IPplayer2;
     int playercount;
-    bool start;
+    bool start =true;
 };
 void loadwsa()
 {
@@ -40,6 +41,7 @@ void server_0(data* arg)
 {
     double time1 = clock();
     SOCKET server_0;
+    SOCKET p1s;
     server_0 = socket(AF_INET, SOCK_STREAM, 0);
     int len_0;
     SOCKADDR_IN server_0_addr;
@@ -73,7 +75,8 @@ void server_0(data* arg)
             {
             case 0:
             {
-                send(client_0, "1", sizeof("1"), 0);//给予玩家代号
+                send(client_0, std::to_string(1).c_str(), sizeof(std::to_string(1).c_str()), 0);//给予玩家代号
+                 p1s = client_0;
                 memset(&recv_buf, 0, CHAR_MAX);
                 printf("分配服务端：玩家1成功进入游戏\n");
                 endl;
@@ -83,12 +86,11 @@ void server_0(data* arg)
                 arg->editpop1(ntohs(client_0_addr.sin_port));
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
                 arg->editipp1(IP);
-                send(client_0, "0", sizeof("0"), 0);
                 break;
             }
             case 1:
             {
-                send(client_0, "2", sizeof("2"), 0);//给予玩家代号
+                send(client_0, std::to_string(2).c_str(), sizeof(std::to_string(2).c_str()), 0);//给予玩家代号
                 memset(&recv_buf, 0, CHAR_MAX);
                 printf("分配服务端：玩家2成功进入游戏\n");
                 endl;
@@ -99,7 +101,9 @@ void server_0(data* arg)
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
                 arg->editipp2(IP);
                 arg->editpop2(ntohs(client_0_addr.sin_port));
-                send(client_0, "0", sizeof("0"), 0);
+                send(client_0, "3", sizeof("3"), 0);
+                send(p1s, "3", sizeof("3"), 0);
+                arg->editstart(true);
                 break;
             }
             case 2:
@@ -120,6 +124,10 @@ void server_0(data* arg)
 }
 void server_1(data* arg)
 {
+    while (arg->gerstart())
+    {
+
+    }
     SOCKET server_1;
     server_1 = socket(AF_INET, SOCK_STREAM, 0);
     int len_1;
@@ -167,6 +175,10 @@ void server_1(data* arg)
 }
 void server_2(data* arg)
 {
+    while (arg->gerstart())
+    {
+
+    }
     SOCKET server_2;
     server_2 = socket(AF_INET, SOCK_STREAM, 0);
     int len_2;
