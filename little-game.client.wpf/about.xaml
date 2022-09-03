@@ -11,7 +11,7 @@
         <TextBlock Text="Little-game" Height="20"/>
         <TextBlock Text="框架:Windows Presentation Foundation " Height="20"/>
         <TextBlock Text="License:GNU General Public License v3.0" Height=" 20"/>
-        <TextBlock Text="©TheColdWorld(2022-2022)" Height="20"/>
+        <TextBlock Text="©TheColdWorld" Height="20"/>
         <Button HorizontalAlignment="Right" Click="Button_Click" HorizontalContentAlignment="Right" Content="确定" Height=" 20" Width="30"/>
     </StackPanel>
 </Window>
