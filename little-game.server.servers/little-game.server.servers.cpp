@@ -3,8 +3,6 @@
 class data
 {
 public:
-    int getpys() { return playercount; }
-    void pyspp() { playercount++; }
     void editport0(int Port0) { port0 = Port0; }
     void editport1(int Port1) { port1 = Port1; }
     void editport2(int Port2) { port2 = Port2; }
@@ -19,8 +17,6 @@ public:
     void editipp2(std::string IP) { IPplayer2 = IP; }
     void editpop1(int port) { portplayer1 = port; }
     void editpop2(int port) { portplayer2 = port; }
-    bool gerstart() { return start; }
-    void editstart(bool arg) { start = arg; }
 private:
     int port0;
     int port1;
@@ -29,19 +25,28 @@ private:
     int portplayer2;
     std::string IPplayer1;
     std::string IPplayer2;
-    int playercount;
-    bool start =true;
 };
+int ccc = 0;
 void loadwsa()
 {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 }
+void sender(SOCKET socket ,char* buf)
+{
+    char buffer[1024] = "\0";
+    strcpy_s(buffer, buf);
+    int nSize = strlen(buffer);
+    WCHAR bufU[1024] = L"\0";
+    int bufUSize = MultiByteToWideChar(CP_ACP, 0, buffer, -1, bufU, 1024);
+    size_t tempsize = wcslen(bufU);
+    send(socket, (char*)bufU, bufUSize * 2, 0);
+}
 void server_0(data* arg)
 {
+    int playercount = 0;
     double time1 = clock();
     SOCKET server_0;
-    SOCKET p1s;
     server_0 = socket(AF_INET, SOCK_STREAM, 0);
     int len_0;
     SOCKADDR_IN server_0_addr;
@@ -55,6 +60,7 @@ void server_0(data* arg)
     printf("分配服务端：启动成功，等待链接\n");
     endl;
     len_0 = sizeof(SOCKADDR);
+    setsockopt(server_0, SOL_SOCKET, SO_SNDBUF, (char*)&ccc, sizeof(ccc));
     while (true)
     {
         SOCKET client_0 = accept(server_0, (SOCKADDR*)&client_0_addr, &len_0);
@@ -71,63 +77,60 @@ void server_0(data* arg)
         PCSTR  IP;
         if (atoi(recv_buf)==1)
         {
-            switch (arg->getpys())
+            switch (playercount)
             {
             case 0:
             {
-                send(client_0, std::to_string(1).c_str(), sizeof(std::to_string(1).c_str()), 0);//给予玩家代号
-                 p1s = client_0;
+                sender(client_0, const_cast<char*>("1"));//给予玩家代号
                 memset(&recv_buf, 0, CHAR_MAX);
                 printf("分配服务端：玩家1成功进入游戏\n");
                 endl;
-                arg->pyspp();
-                send(client_0, std::to_string(arg->getport1()).c_str(), sizeof(std::to_string(arg->getport1()).c_str()), 0);
-                memset(&recv_buf, 0, CHAR_MAX);
+                playercount++;
+                sender(client_0, const_cast<char*>(std::to_string( arg->getport1()).c_str()));
                 arg->editpop1(ntohs(client_0_addr.sin_port));
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
                 arg->editipp1(IP);
+                sender(client_0, const_cast<char*>("3"));
+                std::future<void> s = std::async(std::launch::async, server_1, arg);
+                closesocket(client_0);
                 break;
             }
             case 1:
             {
-                send(client_0, std::to_string(2).c_str(), sizeof(std::to_string(2).c_str()), 0);//给予玩家代号
+                sender(client_0, const_cast<char*>("2"));//给予玩家代号
+
                 memset(&recv_buf, 0, CHAR_MAX);
                 printf("分配服务端：玩家2成功进入游戏\n");
                 endl;
-                arg->pyspp();
-                send(client_0, std::to_string(arg->getport2()).c_str(), sizeof(std::to_string(arg->getport2()).c_str()), 0);
-                memset(&recv_buf, 0, CHAR_MAX);
+                playercount++;
+                sender(client_0, const_cast<char*>(std::to_string(arg->getport1()).c_str()));
                 memset(&IP, 0, sizeof(IP));
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
                 arg->editipp2(IP);
                 arg->editpop2(ntohs(client_0_addr.sin_port));
-                send(client_0, "3", sizeof("3"), 0);
-                send(p1s, "3", sizeof("3"), 0);
-                arg->editstart(true);
+                sender(client_0, const_cast<char*>("3"));
+                std::future<void> s1 = std::async(std::launch::async, server_2, arg);
+                closesocket(client_0);
                 break;
             }
             case 2:
-                send(client_0, "-1", sizeof("-1"), 0);//返回人满请求
+                sender(client_0, const_cast<char*>("-1"));//返回人满请求
                 memset(&recv_buf, 0, CHAR_MAX);
                 printf("分配服务端：玩家数量已满，拒绝链接\n");
-
+                closesocket(client_0);
                 endl;
                 break;
             default:
+                closesocket(client_0);
                 break;
             }
-            closesocket(client_0);
         }
-        else send(client_0, "-2", sizeof("-2"), 0); closesocket(client_0);
+        else sender(server_0, const_cast<char*>("-2"));; closesocket(client_0);
             
     }
 }
 void server_1(data* arg)
 {
-    while (arg->gerstart())
-    {
-
-    }
     SOCKET server_1;
     server_1 = socket(AF_INET, SOCK_STREAM, 0);
     int len_1;
@@ -142,6 +145,7 @@ void server_1(data* arg)
     printf("游戏服务端：玩家1加载完毕\n");
     endl;
     len_1 = sizeof(SOCKADDR);
+    setsockopt(server_1, SOL_SOCKET, SO_SNDBUF, (char*)&ccc, sizeof(ccc));
     while (true)
     {
         SOCKET client_1 = accept(server_1, (SOCKADDR*)&client_1_addr, &len_1);
@@ -175,10 +179,6 @@ void server_1(data* arg)
 }
 void server_2(data* arg)
 {
-    while (arg->gerstart())
-    {
-
-    }
     SOCKET server_2;
     server_2 = socket(AF_INET, SOCK_STREAM, 0);
     int len_2;
@@ -193,6 +193,7 @@ void server_2(data* arg)
     printf("游戏服务端：玩家2加载完毕\n");
     endl;
     len_2 = sizeof(SOCKADDR);
+    setsockopt(server_2, SOL_SOCKET, SO_SNDBUF, (char*)&ccc, sizeof(ccc));
     while (true)
     {
         SOCKET client_2 = accept(server_2, (SOCKADDR*)&client_2_addr, &len_2);

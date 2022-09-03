@@ -23,7 +23,6 @@ namespace little_game.client.wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        int i1 = -2;
         private byte[] buffer = new byte[1024 * 1024 * 2];
         private static Socket Socket;
         private int len;
@@ -31,8 +30,10 @@ namespace little_game.client.wpf
         {
             Startconnect();
             Thread thread = new Thread(Getip);
+            thread.IsBackground = true;
             thread.Start();
             InitializeComponent();
+            Thread.Sleep(1000);
         }
         private void Getip()
         {
@@ -41,14 +42,22 @@ namespace little_game.client.wpf
                 Socket.Send(Encoding.UTF8.GetBytes("1"));
                 len = Socket.Receive(buffer);
                 string a = Encoding.UTF8.GetString(buffer, 0, len);
-                if (a == i1.ToString()) throw new Exceptions("房间已满", -2);
-                connect.playercode = int.Parse(a);
+                int b;
+                if (!int.TryParse(a, out b)) throw new Exceptions("1", 0);
+                if (a == "-2") throw new Exceptions("房间已满", -2);
+                connect.playercode = b;
+                b = 0;
                 len = Socket.Receive(buffer);
                 a = Encoding.UTF8.GetString(buffer, 0, len);
-                connect.protplay = int.Parse(a);
+                if (!int.TryParse(a, out b)) throw new Exceptions("1", 0);
+                connect.protplay = b;
+                a = String.Empty;
+                len = 0;
                 len = Socket.Receive(buffer);
                 a = Encoding.UTF8.GetString(buffer, 0, len);
                 if (a != "3") throw new Exceptions("服务端已经关闭", 0);
+                a = String.Empty;
+                len = 0;
             }
             catch (FormatException e)
             {

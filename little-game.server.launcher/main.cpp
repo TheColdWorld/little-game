@@ -50,13 +50,4 @@ int main()
     datas.editport2(port2);
     loadwsa();
     std::future<void> val = std::async(std::launch::async, server_0, &datas);
-    while (true)
-    {
-        if (datas.gerstart())
-        {
-            std::future<void> p1 = std::async(std::launch::async, server_1, &datas);
-            std::future<void> p2 = std::async(std::launch::async, server_2, &datas);
-        }
-    }
-    
 }
