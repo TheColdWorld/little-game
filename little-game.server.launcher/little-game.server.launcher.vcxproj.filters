@@ -23,9 +23,6 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\little-game.server.servers\little-game.server.servers.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\little-game.server.servers\x64\Debug\little-game.server.servers.lib">

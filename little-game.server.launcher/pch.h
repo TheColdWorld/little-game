@@ -6,7 +6,7 @@
 #include <atlstr.h>
 #include <Thread>
 #include <string>
-#include "little-game.server.servers.h"
+#include "..\little-game.server.servers\little-game.server.servers.h"
 int port0;
 int port1;
 int port2;
@@ -18,9 +18,6 @@ std::string IPplayer2;
 class data
 {
 public:
-    bool gerstart() {return start; }
-    int getpys() { return playercount; }
-    void pyspp() { playercount++; }
     void editport0(int Port0) { port0 = Port0; }
     void editport1(int Port1) { port1 = Port1; }
     void editport2(int Port2) { port2 = Port2; }
@@ -43,7 +40,5 @@ private:
     int portplayer2;
     std::string IPplayer1;
     std::string IPplayer2;
-    int playercount;
-    bool start;
 };
 data datas;
