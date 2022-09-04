@@ -1,17 +1,6 @@
 #include "pch.h"
 #pragma comment(lib,"little-game.server.servers.lib")
-#include "little-game.server.servers.h"
-bool Ctrlhandler(DWORD fdwctrltype)
-{
-    switch (fdwctrltype)
-    {
-    case CTRL_CLOSE_EVENT:
-        //控制台结束时 要做的事情
-        printf("ctrl-close event\n\n");
-        return(true);
-    }
-}
-
+#include "..\little-game.server.servers\little-game.server.servers.h"
 LPCWSTR to_LPCWSTR(const char* in)
 {
     CString a = in;
@@ -26,7 +15,6 @@ std::string LPWSTR_to_string(LPWSTR in)
 }
 int main()
 {
-    SetConsoleCtrlHandler((PHANDLER_ROUTINE)Ctrlhandler, true);
     if (_access("./config.ini", 00) == -1)
     {
         FILE* f;
@@ -48,6 +36,13 @@ int main()
     datas.editport0(port0);
     datas.editport1(port1);
     datas.editport2(port2);
-    loadwsa();
+    switch (loadwsa())
+    {
+    case 0:
+        break;
+    case -1:
+        return -1;
+        break;
+    }
     std::future<void> val = std::async(std::launch::async, server_0, &datas);
 }

@@ -27,10 +27,45 @@ private:
     std::string IPplayer2;
 };
 int ccc = 0;
-void loadwsa()
+int loadwsa()
 {
     WSADATA wsaData;
-    WSAStartup(MAKEWORD(2, 2), &wsaData);
+    switch (WSAStartup(MAKEWORD(2, 2), &wsaData))
+    {
+    case 0:
+        break;
+    case WSASYSNOTREADY:
+        MessageBox(NULL, L"err:基础网络子系统尚未准备好进行网络通信。\n请重启电脑试试,或者检查网络库", L"错误", MB_OK | MB_ICONERROR);
+        printf("err:基础网络子系统尚未准备好进行网络通信。\n请重启电脑试试,或者检查网络库");
+        pause;
+        return -1;
+        break;
+    case WSAVERNOTSUPPORTED:
+        MessageBox(NULL, L"err:此特定的Windows套接字实现未提供所请求的Windows套接字支持的版本。\n请更新网络库", L"错误", MB_OK | MB_ICONERROR);
+        printf("err:此特定的Windows套接字实现未提供所请求的Windows套接字支持的版本。\n请更新网络库");
+        pause;
+        return -1;
+        break;
+    case WSAEINPROGRESS:
+        MessageBox(NULL, L"err:Windows Sockets 1.1的阻止操作正在进行中。\n请重新启动", L"错误", MB_OK | MB_ICONERROR);
+        printf("err:Windows Sockets 1.1的阻止操作正在进行中。\n请重新启动");
+        pause;
+        return -1;
+        break;
+    case WSAEPROCLIM:
+        MessageBox(NULL, L"err:Windows套接字实现所支持的任务数已达到限制。\n请检查系统udp任务数或重新启动", L"错误",MB_OK | MB_ICONERROR);
+            printf("err:Windows套接字实现所支持的任务数已达到限制。\n请检查系统udp任务数或重新启动");
+        pause;
+        return -1;
+        break;
+    case WSAEFAULT:
+        MessageBox(NULL, L"内部错误", L"错误", MB_OK | MB_ICONERROR);
+        printf("内部错误");
+        pause;
+        return -1;
+        break;
+    }
+    return 0;
 }
 void sender(SOCKET socket ,char* buf)
 {
@@ -47,7 +82,7 @@ void server_0(data* arg)
     int playercount = 0;
     double time1 = clock();
     SOCKET server_0;
-    server_0 = socket(AF_INET, SOCK_STREAM, 0);
+    server_0 = socket(AF_INET, SOCK_DGRAM, 0);
     int len_0;
     SOCKADDR_IN server_0_addr;
     SOCKADDR_IN client_0_addr;
@@ -55,77 +90,62 @@ void server_0(data* arg)
     server_0_addr.sin_family = AF_INET;
     server_0_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     server_0_addr.sin_port = htons(arg->getport0());
-    bind(server_0, (SOCKADDR*)&server_0_addr, sizeof(SOCKADDR));
+    bind(server_0, (LPSOCKADDR)&server_0_addr, sizeof(SOCKADDR_IN));
     listen(server_0, 5);
-    printf("分配服务端：启动成功，等待链接\n");
+    printf("分配服务端：启动成功，等待发送数据\n");
     endl;
     len_0 = sizeof(SOCKADDR);
-    setsockopt(server_0, SOL_SOCKET, SO_SNDBUF, (char*)&ccc, sizeof(ccc));
+    CHAR recv_buf[CHAR_MAX];
+    PCSTR  IP;
     while (true)
     {
-        SOCKET client_0 = accept(server_0, (SOCKADDR*)&client_0_addr, &len_0);
-        if (client_0 == SOCKET_ERROR)
-        {
-            printf("error：%d\n", WSAGetLastError());
-            pause;
-            return;
-        }
-        else printf("分配服务端：有新的链接创建成功\n");
-        endl;
-        CHAR recv_buf[CHAR_MAX];
-        recvfrom(client_0, recv_buf, 5, 0, (SOCKADDR*)&client_0_addr, &len_0);
-        PCSTR  IP;
+        recvfrom(server_0, recv_buf, sizeof(recv_buf),0, (SOCKADDR*)&client_0_addr, &len_0);
         if (atoi(recv_buf)==1)
         {
             switch (playercount)
             {
             case 0:
             {
-                sender(client_0, const_cast<char*>("1"));//给予玩家代号
+                sendto(server_0, "1", strlen("1"), 0, (SOCKADDR*)&client_0_addr, len_0);//给予玩家代号
                 memset(&recv_buf, 0, CHAR_MAX);
                 printf("分配服务端：玩家1成功进入游戏\n");
                 endl;
                 playercount++;
-                sender(client_0, const_cast<char*>(std::to_string( arg->getport1()).c_str()));
+                sendto(server_0, std::to_string(arg->getport1()).c_str(), strlen(std::to_string(arg->getport1()).c_str()), 0, (SOCKADDR*)&client_0_addr, len_0);
                 arg->editpop1(ntohs(client_0_addr.sin_port));
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
                 arg->editipp1(IP);
-                sender(client_0, const_cast<char*>("3"));
+                sendto(server_0, "3", strlen("3"), 0, (SOCKADDR*)&client_0_addr, len_0);
                 std::future<void> s = std::async(std::launch::async, server_1, arg);
-                closesocket(client_0);
                 break;
             }
             case 1:
             {
-                sender(client_0, const_cast<char*>("2"));//给予玩家代号
-
+                sendto(server_0, "2", strlen("2"), 0, (SOCKADDR*)&client_0_addr, len_0);//给予玩家代号
                 memset(&recv_buf, 0, CHAR_MAX);
                 printf("分配服务端：玩家2成功进入游戏\n");
                 endl;
                 playercount++;
-                sender(client_0, const_cast<char*>(std::to_string(arg->getport1()).c_str()));
+                sendto(server_0, std::to_string(arg->getport1()).c_str(), strlen(std::to_string(arg->getport1()).c_str()), 0, (SOCKADDR*)&client_0_addr, len_0);
                 memset(&IP, 0, sizeof(IP));
                 IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
                 arg->editipp2(IP);
                 arg->editpop2(ntohs(client_0_addr.sin_port));
-                sender(client_0, const_cast<char*>("3"));
+                sendto(server_0, "3", strlen("3"), 0, (SOCKADDR*)&client_0_addr, len_0);
                 std::future<void> s1 = std::async(std::launch::async, server_2, arg);
-                closesocket(client_0);
                 break;
             }
             case 2:
-                sender(client_0, const_cast<char*>("-1"));//返回人满请求
+                sendto(server_0, "-1", strlen("-1"), 0, (SOCKADDR*)&client_0_addr, len_0);//返回人满请求
                 memset(&recv_buf, 0, CHAR_MAX);
                 printf("分配服务端：玩家数量已满，拒绝链接\n");
-                closesocket(client_0);
                 endl;
                 break;
             default:
-                closesocket(client_0);
                 break;
             }
         }
-        else sender(server_0, const_cast<char*>("-2"));; closesocket(client_0);
+        else sendto(server_0, "-2", strlen("-2"), 0, (SOCKADDR*)&client_0_addr, len_0);
             
     }
 }
