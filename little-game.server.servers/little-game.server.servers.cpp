@@ -77,82 +77,80 @@ void sender(SOCKET socket ,char* buf)
     size_t tempsize = wcslen(bufU);
     send(socket, (char*)bufU, bufUSize * 2, 0);
 }
-void server_0(data* arg)
+int server_0(data* arg)
 {
-    int playercount = 0;
+    int pc = 0;
     double time1 = clock();
     SOCKET server_0;
     server_0 = socket(AF_INET, SOCK_DGRAM, 0);
     int len_0;
-    SOCKADDR_IN server_0_addr;
-    SOCKADDR_IN client_0_addr;
-    memset(&server_0_addr, 0, sizeof(server_0_addr));
-    server_0_addr.sin_family = AF_INET;
-    server_0_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_0_addr.sin_port = htons(arg->getport0());
-    bind(server_0, (LPSOCKADDR)&server_0_addr, sizeof(SOCKADDR_IN));
+    SOCKADDR_IN addrClent;
+    SOCKADDR_IN addrSrv;
+    addrSrv.sin_family = AF_INET;
+    addrSrv.sin_port = htons(arg->getport0());
+    addrSrv.sin_addr.S_un.S_addr = htonl(INADDR_ANY);
+    bind(server_0, (LPSOCKADDR)&addrSrv, sizeof(SOCKADDR_IN));
     listen(server_0, 5);
     printf("分配服务端：启动成功，等待发送数据\n");
     endl;
     len_0 = sizeof(SOCKADDR);
     CHAR recv_buf[CHAR_MAX];
     PCSTR  IP;
-    while (true)
+    while (1)
     {
-        recvfrom(server_0, recv_buf, sizeof(recv_buf),0, (SOCKADDR*)&client_0_addr, &len_0);
-        if (atoi(recv_buf)==1)
+        // 接收数据
+        if (SOCKET_ERROR != recvfrom(server_0, recv_buf, sizeof(recv_buf), 0, (SOCKADDR*)&addrClent, &len_0))
         {
-            switch (playercount)
+            if (atoi(recv_buf) == 1) 
             {
-            case 0:
-            {
-                sendto(server_0, "1", strlen("1"), 0, (SOCKADDR*)&client_0_addr, len_0);//给予玩家代号
-                memset(&recv_buf, 0, CHAR_MAX);
-                printf("分配服务端：玩家1成功进入游戏\n");
-                endl;
-                playercount++;
-                sendto(server_0, std::to_string(arg->getport1()).c_str(), strlen(std::to_string(arg->getport1()).c_str()), 0, (SOCKADDR*)&client_0_addr, len_0);
-                arg->editpop1(ntohs(client_0_addr.sin_port));
-                IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
-                arg->editipp1(IP);
-                sendto(server_0, "3", strlen("3"), 0, (SOCKADDR*)&client_0_addr, len_0);
-                std::future<void> s = std::async(std::launch::async, server_1, arg);
-                break;
-            }
-            case 1:
-            {
-                sendto(server_0, "2", strlen("2"), 0, (SOCKADDR*)&client_0_addr, len_0);//给予玩家代号
-                memset(&recv_buf, 0, CHAR_MAX);
-                printf("分配服务端：玩家2成功进入游戏\n");
-                endl;
-                playercount++;
-                sendto(server_0, std::to_string(arg->getport1()).c_str(), strlen(std::to_string(arg->getport1()).c_str()), 0, (SOCKADDR*)&client_0_addr, len_0);
-                memset(&IP, 0, sizeof(IP));
-                IP = inet_ntop(client_0_addr.sin_family, &client_0_addr.sin_addr, new char[327], 327);
-                arg->editipp2(IP);
-                arg->editpop2(ntohs(client_0_addr.sin_port));
-                sendto(server_0, "3", strlen("3"), 0, (SOCKADDR*)&client_0_addr, len_0);
-                std::future<void> s1 = std::async(std::launch::async, server_2, arg);
-                break;
-            }
-            case 2:
-                sendto(server_0, "-1", strlen("-1"), 0, (SOCKADDR*)&client_0_addr, len_0);//返回人满请求
-                memset(&recv_buf, 0, CHAR_MAX);
-                printf("分配服务端：玩家数量已满，拒绝链接\n");
-                endl;
-                break;
-            default:
-                break;
+                switch (pc)
+                {
+                case 0:
+                {
+                    memset(&recv_buf, 0, CHAR_MAX);
+                    memset(&IP, 0, sizeof(IP));
+                    IP = inet_ntop(addrClent.sin_family, &addrClent.sin_addr, new char[327], 327);
+                    arg->editipp2(IP);
+                    arg->editpop2(ntohs(addrClent.sin_port));
+                    sendto(server_0, "1", strlen("1"), 0, (SOCKADDR*)&addrClent, len_0);//给予玩家代号
+                    pc++;
+                    sendto(server_0, std::to_string(arg->getport1()).c_str(), strlen(std::to_string(arg->getport1()).c_str()), 0, (SOCKADDR*)&addrClent, len_0);
+                    sendto(server_0, "3", strlen("3"), 0, (SOCKADDR*)&addrClent, len_0);
+                    printf("分配服务端：玩家1加载完毕\n");
+                    break;
+                }
+                case 1:
+                {
+                    memset(&recv_buf, 0, CHAR_MAX);
+                    memset(&IP, 0, sizeof(IP));
+                    IP = inet_ntop(addrClent.sin_family, &addrClent.sin_addr, new char[327], 327);
+                    arg->editipp2(IP);
+                    arg->editpop2(ntohs(addrClent.sin_port));
+                    sendto(server_0, "2", strlen("2"), 0, (SOCKADDR*)&addrClent, len_0);//给予玩家代号
+                    pc++;
+                    sendto(server_0, std::to_string(arg->getport2()).c_str(), strlen(std::to_string(arg->getport2()).c_str()), 0, (SOCKADDR*)&addrClent, len_0);
+                    sendto(server_0, "3", strlen("3"), 0, (SOCKADDR*)&addrClent, len_0);
+                    printf("分配服务端：玩家2加载完毕\n");
+                    break;
+                }
+                default:
+                    break;
+                }
+                if (pc == 2)
+                {
+                    printf("分配服务端：开启游戏服务器...\n");
+                    printf("分配服务端：关闭分配服务器...\n");
+                    closesocket(server_0);
+                    std::async(std::launch::async, server_1, arg);
+                }
             }
         }
-        else sendto(server_0, "-2", strlen("-2"), 0, (SOCKADDR*)&client_0_addr, len_0);
-            
     }
 }
-void server_1(data* arg)
+int server_1(data* arg)
 {
-    SOCKET server_1;
-    server_1 = socket(AF_INET, SOCK_STREAM, 0);
+    SOCKET client_1;
+    client_1 = socket(AF_INET, SOCK_DGRAM, 0);
     int len_1;
     SOCKADDR_IN server_1_addr;
     SOCKADDR_IN client_1_addr;
@@ -160,89 +158,28 @@ void server_1(data* arg)
     server_1_addr.sin_family = AF_INET;
     server_1_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     server_1_addr.sin_port = htons(arg->getport1());
-    bind(server_1, (SOCKADDR*)&server_1_addr, sizeof(SOCKADDR));
-    listen(server_1, 5);
-    printf("游戏服务端：玩家1加载完毕\n");
+    bind(client_1, (SOCKADDR*)&server_1_addr, sizeof(SOCKADDR));
+    printf("游戏服务端：服务端加载完毕\n");
     endl;
     len_1 = sizeof(SOCKADDR);
-    setsockopt(server_1, SOL_SOCKET, SO_SNDBUF, (char*)&ccc, sizeof(ccc));
     while (true)
     {
-        SOCKET client_1 = accept(server_1, (SOCKADDR*)&client_1_addr, &len_1);
         if (client_1 == SOCKET_ERROR)
         {
-            printf("error：%d\n", WSAGetLastError());
+            printf("Socket Error：%d\n", WSAGetLastError());
             pause;
-            return;
+            return WSAGetLastError();
         }
         char recv_buf[CHAR_MAX];
         recvfrom(client_1, recv_buf, sizeof(recv_buf), 0, (SOCKADDR*)&client_1_addr, &len_1);
-        if (inet_ntop(client_1_addr.sin_family, &client_1_addr.sin_addr, new char[327], 327) != arg->getipp1())
+        if (inet_ntop(client_1_addr.sin_family, &client_1_addr.sin_addr, new char[327], 327) == arg->getipp1() && ntohs(client_1_addr.sin_port) != arg->getportp1())
         {
-            printf("游戏服务端：发现陌生链接，已自动断开\n");
-            endl; closesocket(client_1);
-            continue;
+
         }
-        if (ntohs(client_1_addr.sin_port) != arg->getportp1())
+        else if (inet_ntop(client_1_addr.sin_family, &client_1_addr.sin_addr, new char[327], 327) == arg->getipp2() && ntohs(client_1_addr.sin_port) != arg->getportp2())
         {
-            printf("游戏服务端：发现陌生链接，已自动断开\n");
-            endl;
-            closesocket(client_1);
-            continue;
+
         }
-        else switch (atoi(recv_buf))
-        {
-        default:
-            break;
-        }
-    }
-}
-void server_2(data* arg)
-{
-    SOCKET server_2;
-    server_2 = socket(AF_INET, SOCK_STREAM, 0);
-    int len_2;
-    SOCKADDR_IN server_2_addr;
-    SOCKADDR_IN client_2_addr;
-    memset(&server_2_addr, 0, sizeof(server_2_addr));
-    server_2_addr.sin_family = AF_INET;
-    server_2_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_2_addr.sin_port = htons(arg->getport2());
-    bind(server_2, (SOCKADDR*)&server_2_addr, sizeof(SOCKADDR));
-    listen(server_2, 5);
-    printf("游戏服务端：玩家2加载完毕\n");
-    endl;
-    len_2 = sizeof(SOCKADDR);
-    setsockopt(server_2, SOL_SOCKET, SO_SNDBUF, (char*)&ccc, sizeof(ccc));
-    while (true)
-    {
-        SOCKET client_2 = accept(server_2, (SOCKADDR*)&client_2_addr, &len_2);
-        if (client_2 == SOCKET_ERROR)
-        {
-            printf("error：%d\n", WSAGetLastError());
-            pause;
-            return;
-        }
-        char recv_buf[CHAR_MAX];
-        recvfrom(client_2, recv_buf, sizeof(recv_buf), 0, (SOCKADDR*)&client_2_addr, &len_2);
-        if (inet_ntop(client_2_addr.sin_family, &client_2_addr.sin_addr, new char[327], 327) != arg->getipp2())
-        {
-            printf("游戏服务端：发现陌生链接，已自动断开\n");
-            endl;
-            closesocket(client_2);
-            continue;
-        }
-        if (ntohs(client_2_addr.sin_port) != arg->getportp2())
-        {
-            printf("游戏服务端：发现陌生链接，已自动断开\n");
-            endl;
-            closesocket(client_2);
-            continue;
-        }
-        else switch (atoi(recv_buf))
-        {
-        default:
-            break;
-        }
+        else continue;
     }
 }

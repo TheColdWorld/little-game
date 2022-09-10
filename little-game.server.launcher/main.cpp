@@ -44,5 +44,5 @@ int main()
         return -1;
         break;
     }
-    std::future<void> val = std::async(std::launch::async, server_0, &datas);
+    server_0(&datas);
 }

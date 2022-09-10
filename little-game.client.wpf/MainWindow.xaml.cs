@@ -84,7 +84,7 @@ namespace little_game.client.wpf
         {
             try
             {
-                Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 IPAddress address = IPAddress.Parse(connect.IPv4);
                 IPEndPoint endPoint = new IPEndPoint(address, connect.prot);
                 Socket.Connect(endPoint);

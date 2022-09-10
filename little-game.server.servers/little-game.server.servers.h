@@ -6,6 +6,5 @@
 #endif // LITTLE-GAME.SERVER.SERVERS_EXPORTS
 extern"C" LITTLE_GAME_SERVER_SERVERS_API class data;
 extern"C" LITTLE_GAME_SERVER_SERVERS_API int loadwsa();
-extern"C" LITTLE_GAME_SERVER_SERVERS_API void server_0(data * arg);
-extern"C" LITTLE_GAME_SERVER_SERVERS_API void server_1(data * arg); 
-extern"C" LITTLE_GAME_SERVER_SERVERS_API void server_2(data * arg);
+extern"C" LITTLE_GAME_SERVER_SERVERS_API int server_0(data * arg);
+extern"C" LITTLE_GAME_SERVER_SERVERS_API int server_1(data * arg); 
