@@ -43,19 +43,18 @@ namespace little_game.client.wpf
                 len = Socket.Receive(buffer);
                 string a = Encoding.UTF8.GetString(buffer, 0, len);
                 int b;
-                if (!int.TryParse(a, out b)) throw new Exceptions("1", 0);
-                if (a == "-2") throw new Exceptions("房间已满", -2);
+                if (!int.TryParse(a, out b)) throw new FormatException();
                 connect.playercode = b;
                 b = 0;
                 len = Socket.Receive(buffer);
                 a = Encoding.UTF8.GetString(buffer, 0, len);
-                if (!int.TryParse(a, out b)) throw new Exceptions("1", 0);
+                if (!int.TryParse(a, out b)) throw new FormatException();
                 connect.protplay = b;
                 a = String.Empty;
                 len = 0;
                 len = Socket.Receive(buffer);
                 a = Encoding.UTF8.GetString(buffer, 0, len);
-                if (a != "3") throw new Exceptions("服务端已经关闭", 0);
+                if (a != "3") throw new Exceptions("服务端已经关闭", 32765);
                 a = String.Empty;
                 len = 0;
             }
@@ -66,12 +65,38 @@ namespace little_game.client.wpf
             }
             catch (SocketException e)
             {
-                MessageBox.Show("错误:SocketException\nerrorcode:" + e.ErrorCode, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                string msg0;
+                switch (e.ErrorCode)
+                {
+                    case 10048:
+                        msg0 = "地址正在使用中";
+                        break;
+                    case 10050:
+                        msg0 = "网络子系统出现故障";
+                        break;
+                    case 10053:
+                        msg0 = "无法连接到服务器";
+                        break;
+                    case 10054:
+                        msg0 = "连接被远程端重置";
+                        break;
+                    case 10060:
+                        msg0 = "连接超时";
+                        break;
+                    case 10049:
+                        msg0 = "本地计算机的地址不可用";
+                            break;
+                        default:
+                        msg0 = "其他错误";
+                        break;
+                }
+                MessageBox.Show("错误:SocketException\nerrorcode:" + e.ErrorCode+"\n"+msg0, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(e.ErrorCode);
             }
             catch (Exceptions e)
             {
-                MessageBox.Show(e.Message+"\n抛出错误位置:\n"+e.StackTrace, "提示");
+                if(e.ErrerCode==32765) MessageBox.Show(e.Message, "提示",MessageBoxButton.OK,MessageBoxImage.Information);
+               else MessageBox.Show(e.Message+"\n抛出错误位置:\n"+e.StackTrace, "提示");
                 Environment.Exit(e.ErrerCode);
             }
             catch (Exception e)
@@ -118,6 +143,10 @@ namespace little_game.client.wpf
             info info = new info();
             info.ShowDialog();
         }
+        private void Exit_btn_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
         public class connect
         {
             public static int prot;
@@ -128,13 +157,13 @@ namespace little_game.client.wpf
     }
     public class Exceptions : ApplicationException //应用异常
     {
-        public Exceptions(string msg, int errercode) : base(msg)
+        public Exceptions(string msg, int errercode)
         {
             message = msg;
             code = errercode;
         }
-        string message;
         int code;
+        string message;
         public int ErrerCode
         {
             get
@@ -146,7 +175,7 @@ namespace little_game.client.wpf
         {
             get
             {
-                return base.Message;
+                return message;
             }
         }
     }

@@ -5,12 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:little_game.client.wpf"
         mc:Ignorable="d"
-        Title="主窗口" Height="450" Width="800">
-    <Grid>
-        <DockPanel>
-            <Menu DockPanel.Dock="Top">
+        Title="" Height="450" Width="800"
+        WindowStyle="None">
+    <Grid Background="Transparent">
+
+        <DockPanel VerticalAlignment="Top" HorizontalAlignment="Left" Height=" 20" Width="800">
+            <Menu DockPanel.Dock="Top" Background="Transparent" BorderBrush="Transparent">
                 <MenuItem Header="检查服务器" Click="server_Click"/>
                 <MenuItem Header="关于" Click="About_Click"/>
+                <Button VerticalAlignment="Top" HorizontalAlignment="Right" Height="20" Width="20" Background="Transparent" BorderBrush="Transparent" Click="Exit_btn_Click">
+                    <Image Source="exit.png" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
             </Menu>
         </DockPanel>
     </Grid>

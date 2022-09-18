@@ -11,6 +11,6 @@
         <TextBox x:Name="IPv4" Height="20"/>
         <TextBlock Text="开放端口" Height="20"/>
         <TextBox x:Name="port" Height="20"/>
-        <Button Content="确定" Height="20" Width="30" Click="Button_Click" VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right"/>
+        <Button Content="确定" Height="20" Width="30" Click="Button_Click" VerticalAlignment="Center" HorizontalAlignment="Right" HorizontalContentAlignment="Right" IsDefault="True"/>
     </StackPanel>
 </Window>

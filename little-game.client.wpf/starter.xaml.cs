@@ -17,7 +17,7 @@ namespace little_game.client.wpf
     /// <summary>
     /// starter.xaml 的交互逻辑
     /// </summary> 
-     
+
     public partial class starter : Window
     {
         bool closed = true;
@@ -40,15 +40,15 @@ namespace little_game.client.wpf
             else MainWindow.connect.IPv4 = IPv4.Text;
             if (string.IsNullOrEmpty(port.Text) || string.IsNullOrWhiteSpace(port.Text))
             {
-                MessageBox.Show("错误：端口未填写,请输入","错误");
+                MessageBox.Show("错误：端口未填写,请输入", "错误");
                 return;
             }
-            if(!int.TryParse(port.Text,out MainWindow.connect.prot))
+            if (!int.TryParse(port.Text, out MainWindow.connect.prot))
             {
                 MessageBox.Show("错误：端口填写违法，请重新填写", "错误");
                 return;
             }
-            if(MainWindow.connect.prot > 65535)
+            if (MainWindow.connect.prot > 65535)
             {
                 MessageBox.Show("端口大于端口上线值，请重新输入", "错误");
                 return;
@@ -65,5 +65,6 @@ namespace little_game.client.wpf
                 mainWindow.Show();
             }
         }
+        
     }
 }
