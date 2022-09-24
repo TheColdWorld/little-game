@@ -6,7 +6,6 @@
 #include <atlstr.h>
 #include <Thread>
 #include <string>
-#include "..\little-game.server.servers\little-game.server.servers.h"
 int port0;
 int port1;
 int port2;

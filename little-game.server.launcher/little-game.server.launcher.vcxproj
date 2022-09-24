@@ -127,16 +127,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="little-game.server.servers.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\little-game.server.servers\x64\Debug\little-game.server.servers.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\little-game.server.servers\x64\Debug\little-game.server.servers.dll" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

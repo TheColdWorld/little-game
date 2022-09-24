@@ -19,20 +19,20 @@ int main()
     {
         FILE* f;
         fopen_s(&f, "./config.ini", "w+");
-        fprintf(f, ";ÕâÊÇ·şÎñ¶ËµÄÅäÖÃÎÄ¼ş,Äã¿ÉÒÔÔÚ·şÎñÆ÷¹Ø±ÕÊ±ĞŞ¸Ä·şÎñÆ÷ÅäÖÃ\n");
+        fprintf(f, ";è¿™æ˜¯æœåŠ¡ç«¯çš„é…ç½®æ–‡ä»¶,ä½ å¯ä»¥åœ¨æœåŠ¡å™¨å…³é—­æ—¶ä¿®æ”¹æœåŠ¡å™¨é…ç½®\n");
         fprintf(f, "[port settings]\nport0=32765");
-        fprintf(f, "\n;´ËÏîÎªÍæ¼Ò·ÖÅä·şÎñ¶ËµÄ¶Ë¿Ú(ÏòÈ«Ìå¿ª·ÅµÄ¶Ë¿Ú)\n");
+        fprintf(f, "\n;æ­¤é¡¹ä¸ºç©å®¶åˆ†é…æœåŠ¡ç«¯çš„ç«¯å£(å‘å…¨ä½“å¼€æ”¾çš„ç«¯å£)\n");
         fprintf(f, "port1=32766");
-        fprintf(f, "\n;´ËÏîÎª¶ÔÍæ¼Ò1¿ª·ÅµÄ¶Ë¿Ú£¨×Ô¶¯·ÖÅä£©\n");
+        fprintf(f, "\n;æ­¤é¡¹ä¸ºå¯¹ç©å®¶1å¼€æ”¾çš„ç«¯å£ï¼ˆè‡ªåŠ¨åˆ†é…ï¼‰\n");
         fprintf(f, "port2=32767");
-        fprintf(f, "\n;´ËÏîÎª¶ÔÍæ¼Ò2¿ª·ÅµÄ¶Ë¿Ú£¨×Ô¶¯·ÖÅä£©\n");
+        fprintf(f, "\n;æ­¤é¡¹ä¸ºå¯¹ç©å®¶2å¼€æ”¾çš„ç«¯å£ï¼ˆè‡ªåŠ¨åˆ†é…ï¼‰\n");
         fclose(f);
     }
     LPWSTR a= new TCHAR[255];
     port0 = GetPrivateProfileInt(to_LPCWSTR("port settings"), to_LPCWSTR("port0"), 32765, to_LPCWSTR("./config.ini"));
     port1 = GetPrivateProfileInt(to_LPCWSTR("port settings"), to_LPCWSTR("port1"), 32766, to_LPCWSTR("./config.ini"));
     port2 = GetPrivateProfileInt(to_LPCWSTR("port settings"), to_LPCWSTR("port2"), 32767, to_LPCWSTR("./config.ini"));
-    printf("Ö÷Ïß³Ì:ÉèÖÃ¼ÓÔØÍê±Ï£¡\n");
+    printf("ä¸»çº¿ç¨‹:è®¾ç½®åŠ è½½å®Œæ¯•ï¼\n");
     datas.editport0(port0);
     datas.editport1(port1);
     datas.editport2(port2);
@@ -44,5 +44,5 @@ int main()
         return -1;
         break;
     }
-    server_0(&datas);
+    
 }
