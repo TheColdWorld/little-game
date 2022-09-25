@@ -15,15 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="pch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="little-game.server.servers.cpp">
+    <ClCompile Include="little-game.server.launcher.main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="little-game.server.launcher.servers.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="functions.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

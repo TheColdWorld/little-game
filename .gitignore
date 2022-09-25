@@ -10,10 +10,7 @@
 /little-game.client.wpf/.vs
 /little-game.client.wpf/bin
 /little-game.client.wpf/obj
-/little-game.client.win32/.vs
-/little-game.server.launcher/little-game.server.servers.dll
-/little-game.server.launcher/little-game.server.servers.lib
 /little-game.server.launcher/config.ini
 /little-game.client.win32/x64/Debug
 *.ini
-/little-game.server.launcher/little-game.server.servers.exp
+/little-game.server.servers
