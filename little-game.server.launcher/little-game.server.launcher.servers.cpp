@@ -5,7 +5,22 @@ LPCWSTR to_LPCWSTR(PCSTR in)
     CString a = in;
     return a;
 }
-
+LPCWSTR to_LPCWSTR(std::string in)
+{
+    CString a = in.c_str();
+    return a;
+}
+char* WcharToChar(const wchar_t* wc)
+{
+    char* m_char = NULL;
+    delete m_char;
+    m_char = NULL;
+    int len = WideCharToMultiByte(CP_ACP, 0, wc, wcslen(wc), NULL, 0, NULL, NULL);
+    m_char = new char[len + 1];
+    WideCharToMultiByte(CP_ACP, 0, wc, wcslen(wc), m_char, len, NULL, NULL);
+    m_char[len] = '\0';
+    return m_char;
+}
 int server_0(data* arg)
 {
     int pc = 0;
@@ -34,7 +49,8 @@ int server_0(data* arg)
             {
             default:
                 break;
-            case 1: {
+            case 1: 
+            {
 
                 switch (pc)
                 {
@@ -68,13 +84,35 @@ int server_0(data* arg)
                 if (pc == 2)
                 {
                     printf("分配服务端：开启游戏服务器...\n");
-                    printf("分配服务端：关闭分配服务器...\n");
-                    closesocket(server_0);
-                    server_1(arg);
+                    //printf("分配服务端：关闭分配服务器...\n");
+                    //closesocket(server_0);
+                    std::wstring aaa = L"port1=";
+                    CString aa;
+                    aaa += std::to_wstring(arg->getport1());
+                    unicodefilein(L"swap.ini",L"[swaper]");
+                    unicodefilein(L"swap.ini", aaa.c_str());
+                    memset(&aaa, 0, sizeof(std::wstring));
+                    aa = arg->getipp1();
+                    aaa = L"ip1=" + aa;
+                    unicodefilein(L"swap.ini", aaa.c_str());
+                    memset(&aaa, 0, sizeof(std::wstring));
+                    aa= arg->getipp2();
+                    aaa = L"ip2=" + aa;
+                    unicodefilein(L"swap.ini", aaa.c_str());
+                    std::string s = WcharToChar(arg->getappname());
+                    s += "\0server_1";
+                    char ptr4[100];
+                    strcpy(ptr4, s.c_str());
+                    WinExec(ptr4, SW_SHOW);
+                    //server_1(arg);
                 }
-
+                break;
             }
-
+            case 2:
+            {
+                sendto(server_0, std::to_string(-2).c_str(), strlen(std::to_string(-2).c_str()), 0, (SOCKADDR*)&addrClent, len_0);
+                break;
+            }
             }
         }
     }
