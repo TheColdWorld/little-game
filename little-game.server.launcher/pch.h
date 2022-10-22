@@ -20,6 +20,8 @@
 #include <WS2tcpip.h>
 #pragma comment(lib,"ws2_32.lib")
 #include <time.h>
+#include<Tlhelp32.h>
+#include <shellapi.h>
 #define cls std::system("cls")
 #define pause std::system("pause>nul")
 #define endl wprintf(L"\n")
@@ -30,16 +32,22 @@ public:
     void editport1(int Port1) { port1 = Port1; }
     int getport0() { return port0; }
     int getport1() { return port1; }
-    LPCWSTR getipp1() { return IPplayer1; }
-    LPCWSTR getipp2() { return IPplayer2; }
-    void editipp1(LPCWSTR IP) { IPplayer1 = IP; }
-    void editipp2(LPCWSTR IP) { IPplayer2 = IP; }
+    std::wstring getipp1() { return IPplayer1; }
+    std::wstring getipp2() { return IPplayer2; }
+    void editipp1(std::wstring IP) { IPplayer1 = IP; }
+    void editipp2(std::wstring IP) { IPplayer2 = IP; }
     wchar_t* getappname() { return name; }
    void inappname(wchar_t* appname) { name = appname; };
 private:
     int port0;
     int port1;
-    LPCWSTR IPplayer1;
-    LPCWSTR IPplayer2;
+    std::wstring IPplayer1;
+    std::wstring IPplayer2;
     wchar_t* name;
 };
+extern  data datas;
+extern  int port0, port1;
+extern HWND consolehwnd;
+extern WSADATA wsaData;
+extern _STARTUPINFOW  Server_1_start_INFO;
+extern PROCESS_INFORMATION Server_1_INFO;

@@ -21,8 +21,27 @@ char* WcharToChar(const wchar_t* wc)
     m_char[len] = '\0';
     return m_char;
 }
+wchar_t* chartowchar(const char* cchar)
+{
+    wchar_t* m_wchar;
+    int len = MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar), NULL, 0);
+    m_wchar = new wchar_t[len + 1];
+    MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar), m_wchar, len);
+    m_wchar[len] = '\0';
+    return m_wchar;
+}
+wchar_t* chartowchar(char* cchar)
+{
+    wchar_t* m_wchar;
+    int len = MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar), NULL, 0);
+    m_wchar = new wchar_t[len + 1];
+    MultiByteToWideChar(CP_ACP, 0, cchar, strlen(cchar), m_wchar, len);
+    m_wchar[len] = '\0';
+    return m_wchar;
+}
 int server_0(data* arg)
 {
+    bool openable=false;
     int pc = 0;
     double time1 = clock();
     SOCKET server_0;
@@ -39,7 +58,7 @@ int server_0(data* arg)
     endl;
     len_0 = sizeof(SOCKADDR);
     CHAR recv_buf[CHAR_MAX];
-    LPCWSTR  IP;
+    char IP[1024];
     while (1)
     {
         // 接收数据
@@ -57,8 +76,8 @@ int server_0(data* arg)
                 case 0: {
                     memset(&recv_buf, 0, CHAR_MAX);
                     memset(&IP, 0, sizeof(IP));
-                    IP = to_LPCWSTR(inet_ntop(addrClent.sin_family, &addrClent.sin_addr, new char[327], 327));
-                    arg->editipp2(IP);
+                    inet_ntop(addrClent.sin_family, &addrClent.sin_addr,IP, 327);
+                    arg->editipp1(chartowchar(IP));
                     sendto(server_0, "1", strlen("1"), 0, (SOCKADDR*)&addrClent, len_0);//给予玩家代号
                     pc++;
                     sendto(server_0, std::to_string(arg->getport1()).c_str(), strlen(std::to_string(arg->getport1()).c_str()), 0, (SOCKADDR*)&addrClent, len_0);
@@ -69,8 +88,8 @@ int server_0(data* arg)
                 case 1: {
                     memset(&recv_buf, 0, CHAR_MAX);
                     memset(&IP, 0, sizeof(IP));
-                    IP = to_LPCWSTR(inet_ntop(addrClent.sin_family, &addrClent.sin_addr, new char[327], 327));
-                    arg->editipp2(IP);
+                    inet_ntop(addrClent.sin_family, &addrClent.sin_addr, IP, 327);
+                    arg->editipp2(chartowchar(IP));
                     sendto(server_0, "2", strlen("2"), 0, (SOCKADDR*)&addrClent, len_0);//给予玩家代号
                     pc++;
                     sendto(server_0, std::to_string(arg->getport1()).c_str(), strlen(std::to_string(arg->getport1()).c_str()), 0, (SOCKADDR*)&addrClent, len_0);
@@ -81,29 +100,13 @@ int server_0(data* arg)
                 default:
                     break;
                 }
-                if (pc == 2)
+                if (pc == 2&&!openable)
                 {
                     printf("分配服务端：开启游戏服务器...\n");
                     //printf("分配服务端：关闭分配服务器...\n");
                     //closesocket(server_0);
-                    std::wstring aaa = L"port1=";
-                    CString aa;
-                    aaa += std::to_wstring(arg->getport1());
-                    unicodefilein(L"swap.ini",L"[swaper]");
-                    unicodefilein(L"swap.ini", aaa.c_str());
-                    memset(&aaa, 0, sizeof(std::wstring));
-                    aa = arg->getipp1();
-                    aaa = L"ip1=" + aa;
-                    unicodefilein(L"swap.ini", aaa.c_str());
-                    memset(&aaa, 0, sizeof(std::wstring));
-                    aa= arg->getipp2();
-                    aaa = L"ip2=" + aa;
-                    unicodefilein(L"swap.ini", aaa.c_str());
-                    std::string s = WcharToChar(arg->getappname());
-                    s += "\0server_1";
-                    char ptr4[100];
-                    strcpy(ptr4, s.c_str());
-                    WinExec(ptr4, SW_SHOW);
+                    std::async(std::launch::async, CreateServer_1, arg);
+                    openable = true;
                     //server_1(arg);
                 }
                 break;
@@ -120,6 +123,7 @@ int server_0(data* arg)
 
 int server_1(data* arg)
 {
+    pause;
     SOCKET client_1;
     client_1 = socket(AF_INET, SOCK_DGRAM, 0);
     int len_1;
@@ -129,6 +133,7 @@ int server_1(data* arg)
     server_1_addr.sin_family = AF_INET;
     server_1_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     server_1_addr.sin_port = htons(arg->getport1());
+    int  pt1 = arg->getport1();//for debug
     bind(client_1, (SOCKADDR*)&server_1_addr, sizeof(SOCKADDR));
     printf("游戏服务端：服务端加载完毕\n");
     endl;
@@ -153,4 +158,24 @@ int server_1(data* arg)
         }
         else continue;
     }
+}
+void CreateServer_1(data* arg)
+{
+    wchar_t exec[MAX_PATH];
+    wcscpy(exec, arg->getappname());
+    wchar_t args[MAX_PATH];
+    std::wstring wstr = arg->getappname();
+    wstr += L" -s";
+    wcscpy(args, wstr.c_str());
+    SECURITY_ATTRIBUTES sa;
+    sa.bInheritHandle = TRUE;
+    sa.lpSecurityDescriptor = NULL;
+    sa.nLength = sizeof(sa);
+    system("del \"swap.ini\">nul 2>nul");
+    unicodefilein(L"swap.ini", L"[swap]");
+    unicodefilein(L"swap.ini", L"ipp1=",arg->getipp1().c_str());
+    unicodefilein(L"swap.ini", L"ipp2=",arg->getipp2().c_str());
+    unicodefilein(L"swap.ini", L"port=", std::to_wstring(arg->getport1()).c_str());
+    if (!CreateProcessW(exec,args , &sa, NULL, TRUE,CREATE_NEW_CONSOLE, NULL, NULL, &Server_1_start_INFO, &Server_1_INFO)) printf("errer,%d\n", GetLastError());
+  system("pause");
 }
