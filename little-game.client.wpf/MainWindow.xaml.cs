@@ -15,6 +15,9 @@ using System.Windows.Shapes;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Security.Permissions;
+using System.Windows.Threading;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace little_game.client.wpf
 {
@@ -28,12 +31,75 @@ namespace little_game.client.wpf
         private int len;
         public MainWindow()
         {
+            InitializeComponent();
+            //Update(but1, wpf.Language.Mainwindowtocheck);
+           // Title = wpf.Language.Maintitle1;
             Startconnect();
             Thread thread = new Thread(Getip);
             thread.IsBackground = true;
             thread.Start();
-            InitializeComponent();
-            Thread.Sleep(1000);
+
+           try
+            {
+                if (Settings.Backgroundenable)
+                {
+                    switch (Settings.Bavkgroundmode)
+                    {
+                        case 0:
+                            MainGrid.Background = new ImageBrush
+                            {
+                                ImageSource = new BitmapImage(new Uri(Settings.Backgroundimage, UriKind.Absolute)),
+                                Stretch = Stretch.None,
+                                Opacity = Settings.BackgroundOpacity
+                                
+                            };
+                            break;
+                        case 1:
+                            MainGrid.Background = new ImageBrush
+                            {
+                                ImageSource = new BitmapImage(new Uri(Settings.Backgroundimage, UriKind.Absolute)),
+                                Opacity = Settings.BackgroundOpacity,
+                                 Stretch = Stretch.Fill
+                            };
+                            break;
+                        case 2:
+                            MainGrid.Background = new ImageBrush
+                            {
+                                ImageSource = new BitmapImage(new Uri(Settings.Backgroundimage, UriKind.Absolute)),
+                                Stretch = Stretch.Uniform,
+                                Opacity = Settings.BackgroundOpacity
+                            };
+                            break;
+                        case 3:
+                            MainGrid.Background = new ImageBrush
+                            {
+                                ImageSource = new BitmapImage(new Uri(Settings.Backgroundimage, UriKind.Absolute)),
+                                Stretch = Stretch.UniformToFill,
+                                Opacity = Settings.BackgroundOpacity
+                            };
+                            break;
+                        default:
+                            throw new FatalExceptions("错误:启动背景但是找不到文件", "错误", -1024);
+                            break;
+                    }
+
+                }
+            }
+            catch (FatalExceptions e)
+            {
+                if (e.TitleAble) MessageBox.Show(e.Message + "\n抛出错误位置:\n" + e.StackTrace, e.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                else MessageBox.Show(e.Message + "\n抛出错误位置:\n" + e.StackTrace, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                Environment.Exit(e.ErrerCode);
+            }
+        }
+        void Update(Button but,string str)
+        {
+            Action<Button, string> updateAction = new Action<Button, string>(UpdateTb);
+            but.Dispatcher.BeginInvoke(updateAction, str);
+        }
+        void UpdateTb(Button but,string text)
+        {
+            but.Content = text;
         }
         private void Getip()
         {
@@ -54,13 +120,14 @@ namespace little_game.client.wpf
                 len = 0;
                 len = Socket.Receive(buffer);
                 a = Encoding.UTF8.GetString(buffer, 0, len);
-                if (a != "3") throw new Exceptions("服务端已经关闭", 32765);
+                if (a != "3") throw new FatalExceptions("服务端已经关闭", 32765);
                 a = String.Empty;
                 len = 0;
+                //Title = wpf.Language.Maintitle2;
             }
             catch (FormatException e)
             {
-                MessageBox.Show("错误：FormatException\n在"+e.StackTrace," 错误",MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("错误：FormatException\n在" + e.StackTrace, " 错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(-2);
             }
             catch (SocketException e)
@@ -85,19 +152,23 @@ namespace little_game.client.wpf
                         break;
                     case 10049:
                         msg0 = "本地计算机的地址不可用";
-                            break;
-                        default:
+                        break;
+                    default:
                         msg0 = "其他错误";
                         break;
                 }
-                MessageBox.Show("错误:SocketException\nerrorcode:" + e.ErrorCode+"\n"+msg0, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("错误:SocketException\nerrorcode:" + e.ErrorCode + "\n" + msg0, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(e.ErrorCode);
             }
-            catch (Exceptions e)
+            catch (FatalExceptions e)
             {
-                if(e.ErrerCode==32765) MessageBox.Show(e.Message, "提示",MessageBoxButton.OK,MessageBoxImage.Information);
-               else MessageBox.Show(e.Message+"\n抛出错误位置:\n"+e.StackTrace, "提示");
+                if (e.TitleAble) MessageBox.Show(e.Message + "\n抛出错误位置:\n" + e.StackTrace, e.Title, MessageBoxButton.OK, MessageBoxImage.Error);
+                else MessageBox.Show(e.Message + "\n抛出错误位置:\n" + e.StackTrace, "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(e.ErrerCode);
+            }
+            catch (InfoExceptions e)
+            {
+                MessageBox.Show(e.Message, "提示", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception e)
             {
@@ -155,15 +226,75 @@ namespace little_game.client.wpf
             public static int playercode;
         }
     }
-    public class Exceptions : ApplicationException //应用异常
+    public class FatalExceptions : ApplicationException //严重异常
     {
-        public Exceptions(string msg, int errercode)
+        public FatalExceptions(string msg, int errercode)
         {
             message = msg;
             code = errercode;
+            titleable = false;
         }
+        public FatalExceptions(string msg,string tit, int errercode)
+        {
+            message = msg;
+            code = errercode;
+            title = tit;
+            titleable = true;
+        }
+        bool titleable;
         int code;
         string message;
+        string title;
+        public bool TitleAble
+        {
+            get { return titleable; }
+        }
+        public string Title
+        {
+            get { return title; }
+        }
+        public int ErrerCode
+        {
+            get
+            {
+                return code;
+            }
+        }
+        public override string Message
+        {
+            get
+            {
+                return message;
+            }
+        }
+    }
+    public class InfoExceptions : ApplicationException //一般异常
+    {
+        public InfoExceptions(string msg, int errercode)
+        {
+            message = msg;
+            code = errercode;
+            titleable = false;
+        }
+        public InfoExceptions(string msg, string tit, int errercode)
+        {
+            message = msg;
+            code = errercode;
+            title = tit;
+            titleable = true;
+        }
+        bool titleable;
+        int code;
+        string message;
+        string title;
+        public bool TitleAble
+        {
+            get { return titleable; }
+        }
+        public string Title
+        {
+            get { return title; }
+        }
         public int ErrerCode
         {
             get

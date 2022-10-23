@@ -6,17 +6,16 @@
         xmlns:local="clr-namespace:little_game.client.wpf"
         mc:Ignorable="d"
         Title="" Height="450" Width="800"
-        WindowStyle="None">
-    <Grid Background="Transparent">
-
-        <DockPanel VerticalAlignment="Top" HorizontalAlignment="Left" Height=" 20" Width="800">
-            <Menu DockPanel.Dock="Top" Background="Transparent" BorderBrush="Transparent">
-                <MenuItem Header="检查服务器" Click="server_Click"/>
-                <MenuItem Header="关于" Click="About_Click"/>
-                <Button VerticalAlignment="Top" HorizontalAlignment="Right" Height="20" Width="20" Background="Transparent" BorderBrush="Transparent" Click="Exit_btn_Click">
-                    <Image Source="exit.png" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Button>
-            </Menu>
+        WindowStyle="ToolWindow">
+    <Grid x:Name="MainGrid" >
+        <DockPanel Height="20" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Button x:Name="but1"  Width="auto" Height="20" BorderBrush="Transparent" Background="Transparent" Click="server_Click"/>
+            <Button x:Name="but2"  Width="auto" Height="20" BorderBrush="Transparent" Background="Transparent" Click="About_Click"/>
         </DockPanel>
+        <Button HorizontalAlignment="Right" VerticalAlignment="Top"  Height=" 20" Width="20" BorderBrush="Transparent" >
+            <Button.Background>
+                <ImageBrush ImageSource="exit.png" Stretch="UniformToFill" TileMode="None" />
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>

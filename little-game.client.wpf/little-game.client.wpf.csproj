@@ -55,6 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Files.cs" />
+    <Compile Include="Language.cs" />
     <Compile Include="starter.xaml.cs">
       <DependentUpon>starter.xaml</DependentUpon>
     </Compile>
